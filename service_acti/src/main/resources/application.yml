@@ -1,0 +1,72 @@
+server:
+  port: 8763
+mysql:
+  url: jdbc:mysql:///test?serverTimezone=UTC
+  username: root
+  password: 123456
+  driverClassName: com.mysql.cj.jdbc.Driver
+spring:
+  application:
+    name: ServiceActiviti
+  datasource:
+    type: com.alibaba.druid.pool.DruidDataSource
+    url: ${mysql.url}
+    driver-class-name: ${mysql.driverClassName}
+    username: ${mysql.username}
+    password: ${mysql.password}
+    druid: # #
+      url: ${mysql.url}
+      username: ${mysql.username}
+      password: ${mysql.password}
+      driver-class-name: ${mysql.driverClassName}
+      initial-size: 10
+      max-active: 200
+      min-idle: 10
+      max-wait: 60000
+      pool-prepared-statements: false
+      validation-query: SELECT 1 FROM DUAL
+      test-on-borrow: false
+      test-on-return: false
+      test-while-idle: true
+      time-between-eviction-runs-millis: 60000
+      min-evictable-idle-time-millis: 30000
+      max-pool-prepared-statement-per-connection-size: 20
+      aop-patterns: com.msyyt.crm.activity.*
+      filter: # 状态监控
+        stat:
+          enabled: true
+          db-type: mysql
+          log-slow-sql: true
+          slow-sql-millis: 2000
+      web-stat-filter: # 监控过滤器
+        enabled: true #是否启用 默认true
+        exclusions:
+          - '*.js'
+          - '*.gif'
+          - '*.jpg'
+          - '*.png'
+          - '*.css'
+          - '*.ico'
+          - /druid/*
+      stat-view-servlet: # druid 监控页面
+        enabled: true
+        url-pattern: /druid/*
+        reset-enable: false
+        allow:  # 白名单
+        deny:   # 黑名单
+        login-username: admin
+        login-password:  admin
+# 工作流
+activiti:
+  # 自动部署验证设置:
+  # true（默认）自动部署流程
+  # false 不自动部署，需要手动部署发布流程
+  check-process-definitions: true
+  # 可选值为: false,true,create-drop,drop-create
+  # 默认为true。为true表示activiti会对数据库中的表进行更新操作，如果不存在，则进行创建。
+  database-schema-update: true
+eureka:
+  client:
+    service-url:
+      # 将网关注册到注册中心
+      defaultZone: http://127.0.0.1:8761/eureka/
